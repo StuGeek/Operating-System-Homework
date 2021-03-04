@@ -89,6 +89,20 @@ print/x $ebx, print/x $edx, print/x $ecx分别以十六进制形式显示寄存�
 
 x/42cd &output以字符变量的形式显示变量output的前42个字节
 
+**gdb基本指令总结：**
+
+    break *_start:在程序开始处设置断点
+    break *end:在程序结束处设置断点
+    run:在gdb内运行启动程序(碰到断点便停止)
+    step/s/next/n:单步调试程序
+    cont:使程序继续运行
+    info registers:显示全部寄存器的值
+    print:显示某一寄存器或变量的值
+    print/d:显示十进制的值
+    print/t:显示二进制的值
+    print/x:显示十六进制的值
+    x/nyz:显示特定内存位置的值,n是要显示的字段数,y是输出格式,z是要显示字段的长度
+
 + 验证实验**cpuid2.s**
 
 在程序的源代码开头之前加上：
@@ -117,6 +131,12 @@ x/42cd &output以字符变量的形式显示变量output的前42个字节
 ---
 
 ### Chapter 05
+
+#### 定义数据元素
+
+数据段：数据段是最常见的定义数据元素的位置。用于存储项目的特定内存位置，可以被程序的指令码引用，并且可以被随意读取和修改，在数据段中定义数据时，它必须被包含在可执行程序中，因为要用特定值初始化它。
+
+bss段：在bss段定义数据元素无须声明特定的数据类型，不需要初始化，内存区域被保留在运行时使用，并且不必包含在最终的程序中。
 
 + 验证实验**sizetest1.s**
 
@@ -148,7 +168,7 @@ x/42cd &output以字符变量的形式显示变量output的前42个字节
 
 ![](http://stugeek.gitee.io/operating-system/Labwork2-pictures/7.png)
 
-分析：在bss段声明添加了10000字节的缓冲区后，可执行程序文件的总长度为4800字节，比原来只增加了160字节。
+分析：在bss段声明添加了10000字节的缓冲区后，可执行程序文件的总长度为4800字节，比原来只增加了160字节，说明在bss段声明数据不必包含在可执行程序中。
 
 + 验证实验**sizetest3.s**
 
@@ -164,7 +184,15 @@ x/42cd &output以字符变量的形式显示变量output的前42个字节
 
 ![](http://stugeek.gitee.io/operating-system/Labwork2-pictures/8.png)
 
-分析：用.fill命令在数据段声明添加了10000字节的缓冲区后，可执行程序文件的总长度为18880字节，比原来增加了14240字节，.fill命令使汇编器自动地创建了10000个数据元素，比原来的长度大了很多。
+分析：用.fill命令在数据段声明添加了10000字节的缓冲区后，可执行程序文件的总长度为18880字节，比原来增加了14240字节，.fill命令使汇编器自动地创建了10000个数据元素，使它比必要的长度大了很多，说明在数据段定义数据时，其必须被包含在可执行程序中。
+
+#### 传送数据元素
+
+MOV指令基本格式：
+
+    movx source, destination
+
+source和destination可以是内存地址，存储在内存中的数据值，指令语句中定义的数据值，或者是寄存器
 
 + 验证实验**movetest1.s**
 
@@ -180,7 +208,7 @@ x/42cd &output以字符变量的形式显示变量output的前42个字节
 
 ![](http://stugeek.gitee.io/operating-system/Labwork2-pictures/9.png)
 
-分析：可以看到，执行了movl value, %ecx命令后，内存中存储的值1被传送到了ecx寄存器，ecx寄存器的值从原来的0变成了1，寄存器中的值被传送到了另一寄存器中
+分析：可以看到，执行了movl value, %ecx命令后，内存中存储的值1被传送到了ecx寄存器，ecx寄存器的值从原来的0变成了1，内存位置中的值被传送到了另一寄存器中
 
 + 验证实验**movetest2.s**
 
@@ -232,9 +260,17 @@ x/42cd &output以字符变量的形式显示变量output的前42个字节
 
 然后单步运行程序，发现第一个元素从values数组中加载到eax寄存器，即10，现在eax寄存器中的值为10。
 
-继续单步执行，发现values标签引用的内存地址加载到了edi寄存器中，下一条指令又将100传送到了edi寄存器保存的地址之后4字节位置的内存地址，查看发现100保存到了values数组中的第二个元素的位置。
+继续单步执行，发现values标签引用的内存地址加载到了edi寄存器中，下一条指令又将100传送到了edi寄存器保存的地址之后4字节位置的内存地址，使用寄存器间接寻址，查看发现100保存到了values数组中的第二个元素的位置。
 
 再下一条指令把数组的第二个元素加载到了ebx寄存器中，使用echo $?命令查看第二个数据数组元素的值，也是100。
+
+#### 条件传送指令
+
+指令格式：
+
+    cmovx source, destination
+
+其中x是一个或者两个字母的代码，表示将触发传送操作的条件，取决于EFLAGS寄存器的当前值。
 
 + 验证实验**cmovetest.s**
 
@@ -249,11 +285,22 @@ x/42cd &output以字符变量的形式显示变量output的前42个字节
 执行结果如下：
 
 ![](http://stugeek.gitee.io/operating-system/Labwork2-pictures/13.png)
+
 ![](http://stugeek.gitee.io/operating-system/Labwork2-pictures/14.png)
 
 分析：寄存器ebx用来保存当前找到的最大整数，然后数组元素被逐个加载到寄存器eax中，并且和寄存器ebx中的值比较，如果寄存器eax中的值更大，就用寄存器eax中的值代替寄存器ebx中的值。
 
 程序一开始，数组的第一个值被加载到寄存器ebx中。为105，第二个值被加载到寄存器eax中，为235，运行cmp和cmova指令，发现寄存器ebx寄存器中的值变成了更大的235，持续操作，直到数组的数全部被遍历完，最后寄存器ebx中的数就是数组中的数的最大值，为315。
+
+#### 数据交换指令
+
+基本指令：
+
+    XCHG:在两个寄存器之间或者寄存器和内存位置之间交换它们的值
+    BSWAP:反转一个32位寄存器中的字节顺序
+    XADD:交换两个值并且把它们的总和存储在目标操作数中
+    CMPXCHG:把一个值和一个外部的 值进行比较，并且交换它和另一个的值
+    CMPXCHG8B:比较两个64位的值并且交换它们的值
 
 + 验证实验**swaptest.s**
 
@@ -301,7 +348,7 @@ x/42cd &output以字符变量的形式显示变量output的前42个字节
 
 ![](http://stugeek.gitee.io/operating-system/Labwork2-pictures/21.png)
 
-分析：cmpxchg8b data使data引用一个内存位置，其中的8字节值会与寄存器edx和寄存器eax进行比较，如果目标值和edx:eax中包含的值匹配，就把位于ecx:ebx中的64位值传送给目标内存位置，如果不匹配，就把目标内存位置地址中的值加载到edx:eax寄存器对中，从输出可以看出，ecx:ebx中的6值确实传送给了data目标内存位置
+分析：cmpxchg8b data使data引用一个内存位置，其中的8字节值会与寄存器edx和寄存器eax进行比较，如果目标值和edx:eax中包含的值匹配，就把位于ecx:ebx中的64位值传送给目标内存位置，如果不匹配，就把目标内存位置地址中的值加载到edx:eax寄存器对中，从输出可以看出，ecx:ebx中的值确实传送给了data目标内存位置
 
 + 验证实验**bubble.s**
 
@@ -318,6 +365,20 @@ x/42cd &output以字符变量的形式显示变量output的前42个字节
 ![](http://stugeek.gitee.io/operating-system/Labwork2-pictures/17.png)
 
 分析：程序为冒泡排序算法，程序运行前，values数组为乱序，程序运行完毕后，values数组为升序排序
+
+#### 压入数据和弹出数据
+
+PUSH指令的简单格式：
+
+    pushx source
+
+其中x表示数据元素的长度，source是要放入堆栈的数据元素
+
+POP指令的格式：
+
+    popx destination
+
+其中x表示数据元素的长度，destination是接收数据的位置
 
 + 验证实验**pushpop.s**
 
