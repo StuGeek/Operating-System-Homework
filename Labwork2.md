@@ -1,7 +1,5 @@
 # 操作系统实验报告2
 
----
-
 ## 实验内容
 
 + 了解 Linux 下 x86 汇编语言编程环境；
@@ -15,8 +13,6 @@
 + 编译器：gcc
 
 ## 技术日志
-
----
 
 ### Chapter 04
 
@@ -40,7 +36,34 @@
 
 ![](http://stugeek.gitee.io/operating-system/Labwork2-pictures/1.png)
 
-**2.使用gdb运行程序：**
+**2.使用编译器进行汇编**
+
+将原程序代码中的：
+
+    .globl _start
+    _start:
+
+改为：
+    .globl main
+    main:
+
+安装32位的gcc库：
+
+    sudo apt-get install libc6-dev-i386
+
+执行程序命令：
+
+    gcc cpuid.s -m32 -o cpuid
+
+执行结果如下：
+
+    The processor Vendor ID is 'GenuineIntel'
+
+执行截图：
+
+![](http://stugeek.gitee.io/operating-system/Labwork2-pictures/2.png)
+
+**3.使用gdb运行程序：**
 
 执行程序命令：
 
@@ -51,6 +74,7 @@
 执行结果如下：
 
 ![](http://stugeek.gitee.io/operating-system/Labwork2-pictures/3.png)
+
 ![](http://stugeek.gitee.io/operating-system/Labwork2-pictures/4.png)
 
 分析：
@@ -313,15 +337,37 @@ x/42cd &output以字符变量的形式显示变量output的前42个字节
 
 ### 遇到问题
 
-1.当按照课本上命令运行cpuid2.s，会发生错误：
+1.一开始当使用gcc运行cpuid.s时，会发生错误：
+
+![](http://stugeek.gitee.io/operating-system/Labwork2-pictures/22.png)
+
+原因是gcc库是64位的，不能编译运行32位的程序
+
+2.当按照课本上命令运行cpuid2.s，会发生错误：
 
 ![](http://stugeek.gitee.io/operating-system/Labwork2-pictures/19.png)
 
 原因是源代码是32位的，在64位的系统上会生成64位的程序，运行时会发生兼容性错误，导致程序无法运行。
 
-解决方法：
+**解决方法：**
 
-可以将文件从64位强行编译成32位的程序，然后再运行。
+1.需要安装32位的库：
+
+    sudo apt-get install libc6-dev-i386
+
+执行程序命令改为：
+
+    gcc cpuid.s -m32 -o cpuid
+
+执行结果如下：
+
+    The processor Vendor ID is 'GenuineIntel'
+
+执行截图：
+
+![](http://stugeek.gitee.io/operating-system/Labwork2-pictures/23.png)
+
+2.可以将文件从64位强行编译成32位的程序，然后再运行。
 
 在程序的源代码开头之前加上：
 
