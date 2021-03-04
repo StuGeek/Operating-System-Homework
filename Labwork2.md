@@ -263,6 +263,22 @@ x/42cd &output以字符变量的形式显示变量output的前42个字节
 
 分析：在执行cmpxchg指令前，寄存器ebx中的值为5，data中的值为10，执行cmpxchg指令后，data中的值变为5，寄存器ebx中的值被传送到data的内存位置
 
++ 验证实验**cmpxchg8btest.s**
+
+程序的源代码略。
+
+执行程序命令：
+
+    as -gstabs -o cmpxchg8btest.o cmpxchg8btest.s
+    ld -o cmpxchg8btest cmpxchg8btest.o
+    gdb -q cmpxchg8btest
+
+执行结果如下：
+
+![](http://stugeek.gitee.io/operating-system/Labwork2-pictures/21.png)
+
+分析：cmpxchg8b data使data引用一个内存位置，其中的8字节值会与寄存器edx和寄存器eax进行比较，如果目标值和edx:eax中包含的值匹配，就把位于ecx:ebx中的64位值传送给目标内存位置，如果不匹配，就把目标内存位置地址中的值加载到edx:eax寄存器对中，从输出可以看出，ecx:ebx中的6值确实传送给了data目标内存位置
+
 + 验证实验**bubble.s**
 
 程序的源代码略。
