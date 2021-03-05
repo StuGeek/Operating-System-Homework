@@ -444,7 +444,7 @@ POP指令的格式：
 
 执行结果如下：
 
-![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/17.png)
+![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/27.png)
 
 分析：程序为冒泡排序算法，程序运行前，values数组为乱序，程序运行完毕后，values数组为升序排序
 
