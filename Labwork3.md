@@ -278,7 +278,7 @@ CMP指令把第二个操作数和第一个操作数进行比较。在幕后，�
 
 分析：调试器假设寄存器ebx和ecx包含带符号整数，并且使用我们期望的数据类型显示答案。但是寄存器edx出现了问题。因为调试器试图把整个寄存器edx作为带符号整数数据值 
 显示,所以它假设整个寄存器edx包含一个双字带符号整数（32位）。因为寄存器edx只包含一个单字整数（16位），所以解释出的值是错误的。寄存器中的数据仍然是正确的 
-（OxFFB1），但是调试器认为的这个数字表示的内容是错误的.
+（0xFFB1），但是调试器认为的这个数字表示的内容是错误的.
 
 #### MOVZE指令
 
@@ -446,7 +446,21 @@ IA-32指令集包含处理80位打包BCD值的指令。可以使用FBLD和FBSTP�
 
 分析：bcdtest.s程序在标签data1定义的内存位置创建一个表示十进制值1234的简单的BCD值（记住Intel使用小尾数表示法）。使用FBLD指令把这个值加载到FPU寄存器堆栈的顶部（ ST0）。使用FIMUL指令把ST0寄存器和data2所在的内存位置中的整数值相乘。最后，使用FBSTP指令把堆栈中新的值传送回data1所在的内存位置中。
 
-首先，在执行程序前，查看data1所在的内存位置值。
+首先，在执行程序前，使用```x/10xb &data1```查看data1所在的内存位置值。1234的BCD值被加载到了data1所在的内存位置。
+
+然后，单步执行FBLD指令，并且使用```info all```命令查看ST0寄存器中的值，ST0寄存器的值应该显示它加载了十进制值1234，但是这个寄存器的十六进制不是80位打包BCD格式，在FPU中，BCD值被转换成了浮点表示方式。
+
+接着单步执行下一条指令（FIMUL），并且再次查看寄存器，发现ST0寄存器中的值和2相乘了。
+
+最后把ST0中的值存放回data1所在的内存位置中，使用```x/10xb &data1```显示这个内存位置，可以看到，新的值被存放到了data1所在的内存位置，并且转换回了BCD格式。
+
+#### 传送浮点值
+
+FLD指令用于把浮点值传送入和传送出FPU寄存器。FLD指令的格式是：
+
+    fld source
+
+其中source可以是32位、64位或者80位内存位置。
 
 + 验证实验**floattest.s**
 
@@ -462,7 +476,25 @@ IA-32指令集包含处理80位打包BCD值的指令。可以使用FBLD和FBSTP�
 
 ![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/25.png)
 
-分析：程序为冒泡排序算法，程序运行前，values数组为乱序，程序运行完毕后，values数组为升序排序
+分析：标签value1指向存储在4个字节内存中的单精度浮点值。标签value2指向存储在8个字节内存 
+中的双精度浮点值。标签data指向内存中的空缓冲区，它将被用于传输双精度浮点值。
+
+IA-32的FLD指令用于把存储在内存中的单精度和双精度浮点数加载到FPU寄存器堆栈中。为了区分这两种数据长度，GNU汇编器使用FLDS指令加载单精度浮点数，而使用FLDL指令加 
+裁双精度浮点数。
+
+类似地，FST指令用于获取FPU寄存器堆栈中顶部的值，并且把这个值存放到内存位置中。对于单精度数字，使用的指令是FSTS，双精度数字使用的指令是FSTL。
+
+首先使用```x/f &value1```和```x/gf &value2```查看十进制值。f选项显示单精度数字，需要使用gf选项显示双精度值，显示四字值，当调试器试图计算要显示的值时，已经存在舍入错误。
+
+接着，使用```x/4xb &value1```和```x/8xb &value2```查看浮点值是如何存储在内存位置的。
+
+然后，单步运行第一条FLDS指令，使用```print $st0```查看ST0寄存器的值，可以看到，位于value1内存位置中的值```12.340000152587890625```被正确存放到了ST0寄存器中。
+
+接下来，单步运行下一条指令，并且查看ST0寄存器中的值，这个值已经被替换为新加载的双精度值```2353.63099999999985812```
+
+为了查看对原来加载的值进行了什么处理，查看ST1寄存器，发现当加载新的值时，ST0中的值被下移到了ST1寄存器中。
+
+再查看data标签的值，单步执行FSTL指令，并且再次查看，发现FSTL指令把ST0寄存器中的值加载到了data标签指向的内存位置。
 
 + 验证实验**fpuvals.s**
 
@@ -480,7 +512,7 @@ IA-32指令集包含处理80位打包BCD值的指令。可以使用FBLD和FBSTP�
 
 ![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/27.png)
 
-分析：程序为冒泡排序算法，程序运行前，values数组为乱序，程序运行完毕后，values数组为升序排序
+分析：程序简单地把各个浮点常量压入到FPU寄存器堆栈中。值的顺序和它们被存放到堆栈中的顺序是相反的。
 
 + 验证实验**ssefloat.s**
 
@@ -514,6 +546,8 @@ IA-32指令集包含处理80位打包BCD值的指令。可以使用FBLD和FBSTP�
 
 分析：程序为冒泡排序算法，程序运行前，values数组为乱序，程序运行完毕后，values数组为升序排序
 
+#### 转换指令
+
 + 验证实验**convtest.s**
 
 程序的源代码略。
@@ -528,61 +562,32 @@ IA-32指令集包含处理80位打包BCD值的指令。可以使用FBLD和FBSTP�
 
 ![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/17.png)
 
-分析：程序为冒泡排序算法，程序运行前，values数组为乱序，程序运行完毕后，values数组为升序排序
+分析：convtest.s程序在内存位置value1定义一个打包单精度浮点值，在内存位置value2定义一个打
+包双字整数值。第一对指令可以比较CVTPS2DQ和CVTTPS2DQ指令的结果。第一条指令执行一般的舍入，第二条指令通过向零方向舍入进行截断。
+
+按照v4_int32格式，值被正确地显示出来，正如所见，一般转换把浮点值124.79舍入为125。
+但是截断转换把它向零方向舍入，使之成为124。内存位置data的值被转换为打包双字整数后，可以使用x/4d命令显示它。可以看到，显示出了舍入后的整数值。
 
 ### 遇到问题
 
-1.signtest.s：
+1.当运行signtest.s时，会发生报错，显示```Error: can't open signtest.s for reading: No such file or directory```
+
+原因是课本提供的原来的代码的有一行的的寄存器出错：
+
+    add $8, $esp
+
+解决方案：这行代码应该改为：
+
+    add $8, %esp
+
+执行截图：
 
 ![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/22.png)
 
-原因是gcc库是64位的，不能编译运行32位的程序
+2.有时候按照课本的方式进行gdb调试，比如运行quadtest.s程序，使用```x/20b &data1```想以十六进制显示data1数组里的数值时，最后显示的是十进制的数值。
 
-2.当按照课本上命令运行cpuid2.s，会发生错误：
+解决方法：把```x/20b &data1```改为```x/20xb &data1```，在代表显示数值长度的n=20后面加上x，就可以以十六进制显示数字，其它的程序显示时也是一样。
+
+执行截图：
 
 ![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/19.png)
-
-原因是源代码是32位的，在64位的系统上会生成64位的程序，运行时会发生兼容性错误，导致程序无法运行。
-
-**解决方法：**
-
-1.需要安装32位的库：
-
-    sudo apt-get install libc6-dev-i386
-
-执行程序命令改为：
-
-    gcc cpuid.s -m32 -o cpuid
-
-执行结果如下：
-
-    The processor Vendor ID is 'GenuineIntel'
-
-执行截图：
-
-![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/23.png)
-
-2.可以将文件从64位强行编译成32位的程序，然后再运行。
-
-在程序的源代码开头之前加上：
-
-    .code32
-
-并安装程序运行所需32位库：
-
-    sudo apt-get update
-    sudo apt install lib32z1 lib32ncurses5 g++-multilib libc6-dev-i386
-
-执行程序命令改为：
-
-    as --32 -o cpuid2.o cpuid2.s
-    ld -m elf_i386 -dynamic-linker /lib/ld-linux.so.2 -o cpuid2 -lc cpuid2.o
-    ./cpuid2
-
-执行结果如下：
-
-    The processor Vendor ID is 'GenuineIntel'
-
-执行截图：
-
-![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/20.png)
