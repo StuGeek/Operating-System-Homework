@@ -528,7 +528,13 @@ IA-32的FLD指令用于把存储在内存中的单精度和双精度浮点数加
 
 ![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/28.png)
 
-分析：程序为冒泡排序算法，程序运行前，values数组为乱序，程序运行完毕后，values数组为升序排序
+![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/29.png)
+
+分析：程序创建两个数据数组，每个数组由4个单精度浮点值组成。它们将成为被存储到XMM寄存器中的打包数据值，还创建了一个数据缓冲区。它有足够的空间保存4个单精度浮点值（即一个打包的值）。然后程序使用MOVUPS指令在XMM寄存器和内存之间传送打包单精度浮点值。
+
+可以看到，所以数据都被正确地加载到了XMM寄存器中。v4_float格式显示使用的打包单精度浮点值。最后是把XMM寄存器的值复制到data位置。可以使用```x/4f```命令显示结果。
+
+按照十六进制复查答案，发现内存位置data和内存位置value1中的值是匹配的。
 
 + 验证实验**sse2float.s**
 
@@ -542,9 +548,13 @@ IA-32的FLD指令用于把存储在内存中的单精度和双精度浮点数加
 
 执行结果如下：
 
-![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/17.png)
+![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/30.png)
 
-分析：程序为冒泡排序算法，程序运行前，values数组为乱序，程序运行完毕后，values数组为升序排序
+![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/31.png)
+
+分析：存储在内存中的数值被改为双精度浮点值。因为程序将传输打包值，所以创建了一个包含2个值的数组。
+
+可以看到，对于v2_double数据类型，正确的值已经被传送到了寄存器中。因为内存位置data包含2个双精度浮点值，所以使用```x/2gf```命令显示存储在这个内存位置的2个值，发现确实正确的值也被复制到了这里。
 
 #### 转换指令
 
@@ -560,10 +570,9 @@ IA-32的FLD指令用于把存储在内存中的单精度和双精度浮点数加
 
 执行结果如下：
 
-![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/17.png)
+![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/32.png)
 
-分析：convtest.s程序在内存位置value1定义一个打包单精度浮点值，在内存位置value2定义一个打
-包双字整数值。第一对指令可以比较CVTPS2DQ和CVTTPS2DQ指令的结果。第一条指令执行一般的舍入，第二条指令通过向零方向舍入进行截断。
+分析：convtest.s程序在内存位置value1定义一个打包单精度浮点值，在内存位置value2定义一个打包双字整数值。第一对指令可以比较CVTPS2DQ和CVTTPS2DQ指令的结果。第一条指令执行一般的舍入，第二条指令通过向零方向舍入进行截断。
 
 按照v4_int32格式，值被正确地显示出来，正如所见，一般转换把浮点值124.79舍入为125。
 但是截断转换把它向零方向舍入，使之成为124。内存位置data的值被转换为打包双字整数后，可以使用x/4d命令显示它。可以看到，显示出了舍入后的整数值。
@@ -582,7 +591,7 @@ IA-32的FLD指令用于把存储在内存中的单精度和双精度浮点数加
 
 执行截图：
 
-![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/22.png)
+![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/33.png)
 
 2.有时候按照课本的方式进行gdb调试，比如运行quadtest.s程序，使用```x/20b &data1```想以十六进制显示data1数组里的数值时，最后显示的是十进制的数值。
 
@@ -590,4 +599,4 @@ IA-32的FLD指令用于把存储在内存中的单精度和双精度浮点数加
 
 执行截图：
 
-![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/19.png)
+![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/34.png)
