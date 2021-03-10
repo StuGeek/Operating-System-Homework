@@ -296,7 +296,7 @@ MOVZX指令格式：
 
 执行程序命令：
 
-    as --32 -gstabs -o  movzxtest.o movzxtest.s
+    as --32 -gstabs -o movzxtest.o movzxtest.s
     ld -m elf_i386 -dynamic-linker /lib/ld-linux.so.2 -o movzxtest movzxtest.o
     gdb -q movzxtest
 
