@@ -276,9 +276,7 @@ CMP指令把第二个操作数和第一个操作数进行比较。在幕后，�
 
 ![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/16.png)
 
-分析：调试器假设寄存器ebx和ecx包含带符号整数，并且使用我们期望的数据类型显示答案。但是寄存器edx出现了问题。因为调试器试图把整个寄存器edx作为带符号整数数据值 
-显示,所以它假设整个寄存器edx包含一个双字带符号整数（32位）。因为寄存器edx只包含一个单字整数（16位），所以解释出的值是错误的。寄存器中的数据仍然是正确的 
-（0xFFB1），但是调试器认为的这个数字表示的内容是错误的.
+分析：调试器假设寄存器ebx和ecx包含带符号整数，并且使用我们期望的数据类型显示答案。但是寄存器edx出现了问题。因为调试器试图把整个寄存器edx作为带符号整数数据值显示,所以它假设整个寄存器edx包含一个双字带符号整数（32位）。因为寄存器edx只包含一个单字整数（16位），所以解释出的值是错误的。寄存器中的数据仍然是正确的（0xFFB1），但是调试器认为的这个数字表示的内容是错误的.
 
 #### MOVZE指令
 
@@ -476,11 +474,9 @@ FLD指令用于把浮点值传送入和传送出FPU寄存器。FLD指令的格�
 
 ![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/25.png)
 
-分析：标签value1指向存储在4个字节内存中的单精度浮点值。标签value2指向存储在8个字节内存 
-中的双精度浮点值。标签data指向内存中的空缓冲区，它将被用于传输双精度浮点值。
+分析：标签value1指向存储在4个字节内存中的单精度浮点值。标签value2指向存储在8个字节内存 中的双精度浮点值。标签data指向内存中的空缓冲区，它将被用于传输双精度浮点值。
 
-IA-32的FLD指令用于把存储在内存中的单精度和双精度浮点数加载到FPU寄存器堆栈中。为了区分这两种数据长度，GNU汇编器使用FLDS指令加载单精度浮点数，而使用FLDL指令加 
-裁双精度浮点数。
+IA-32的FLD指令用于把存储在内存中的单精度和双精度浮点数加载到FPU寄存器堆栈中。为了区分这两种数据长度，GNU汇编器使用FLDS指令加载单精度浮点数，而使用FLDL指令加载双精度浮点数。
 
 类似地，FST指令用于获取FPU寄存器堆栈中顶部的值，并且把这个值存放到内存位置中。对于单精度数字，使用的指令是FSTS，双精度数字使用的指令是FSTL。
 
@@ -599,3 +595,29 @@ IA-32的FLD指令用于把存储在内存中的单精度和双精度浮点数加
 执行截图：
 
 ![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/34.png)
+
+3.当运行convtest.s时，会发生报错，显示```Error: symbol `data' is already defined```
+
+原因是课本提供的原来的代码的data命名重复了
+
+    data:
+        .lcomm data, 16
+
+和
+
+    movdqu %xmm0, data
+
+都与开头的```.section .data```重复
+
+解决方案：代码应该改为：
+
+    data1:
+        .lcomm data, 16
+
+和
+
+    movdqu %xmm0, data1
+
+执行截图：
+
+![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/35.png)
