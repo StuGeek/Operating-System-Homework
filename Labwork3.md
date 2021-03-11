@@ -620,3 +620,25 @@ IA-32的FLD指令用于把存储在内存中的单精度和双精度浮点数加
 执行截图：
 
 ![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/35.png)
+
+4.当运行ifthen.c和for.c时，如果按照课本上给的指令编译：
+
+    gcc -S ifthen.c
+    cat ifthen.s
+
+    gcc -S for.c
+    cat for.s
+
+生成的.s文件是64位的，与课本上的代码不符。
+
+解决方案：
+
+应该使用32位命令进行编译：
+
+    gcc -m32 -S ifthen.c
+    cat ifthen.s
+
+    gcc -m32 -S for.c
+    cat for.s
+
+这样生成的.s文件就是32位的，与课本上的代码相符。
