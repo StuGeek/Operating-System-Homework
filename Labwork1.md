@@ -39,6 +39,6 @@
 
     $(call create_target,ucore.img)
 
-第一行的```UCOREIMG    := $(call totarget,ucore.img)```，```UCOREIMG```表示生成ucore.img文件，
+第一行的```UCOREIMG    := $(call totarget,ucore.img)```，```UCOREIMG```表示生成ucore.img文件
 
 一个被系统认为是符合规范的硬盘主引导扇区的特征是什么？
