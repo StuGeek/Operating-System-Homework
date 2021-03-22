@@ -270,7 +270,7 @@ SUB指令的格式如下：
 
     movl $-1259230143, %eax
 
-![](http://stugeek.gitee.io/operating-system/Labwork3-pictures/12.png)
+![](http://stugeek.gitee.io/operating-system/Labwork4-pictures/12.png)
 
 分析：程序减去负数生成一个绝对值更小的负数，它在数据长度的界限之内，没有设置溢出标志。
 
@@ -1060,3 +1060,5 @@ SCAS指令使用EDI寄存器作为隐含的目标操作数。EDI寄存器必须�
 ![](http://stugeek.gitee.io/operating-system/Labwork4-pictures/21.png)
 
 ![](http://stugeek.gitee.io/operating-system/Labwork4-pictures/22.png)
+
+可以看到，按键次数大大减少，无需按几十次单步调试的命令才能完成对程序的调试和查看
