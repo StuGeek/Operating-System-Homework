@@ -165,7 +165,25 @@
 
 ![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/24.png)
 
-分析：bash是start main（）的父pro
+分析：
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/25.jpg)
+
+bash是start main（）的父pro
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/26.jpg)
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/27.jpg)
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/28.jpg)
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/29.jpg)
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/30.jpg)
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/31.jpg)
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/32.jpg)
 
 start main（）是sleeper的父pro，它从execv（）继承vorked子级的pid
 
