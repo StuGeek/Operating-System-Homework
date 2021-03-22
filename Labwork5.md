@@ -25,17 +25,19 @@
 
 ![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/1.png)
 
+分析：
+
 ![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/2.jpg)
+
+可以看到，子进程中的变量count与父进程中的变量count具有相同的虚拟地址。
 
 ![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/3.jpg)
 
-![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/4.jpg)
-
-分析：子进程中的变量count与父进程中的变量count具有相同的虚拟地址。
-
 子进程中的count值与父进程中的count值不同。它们被映射到不同进程映像中的不同物理地址。
 
-由子pro和父pro执行的测试点
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/4.jpg)
+
+由子进程和父进程执行的测试点
 
 + 验证实验**alg.6-2-vfork-demo.c**
 
@@ -48,19 +50,21 @@
 
 ![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/5.png)
 
+分析：
+
 ![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/6.jpg)
+
+子进程中的变量计数与父进程中的变量计数具有相同的虚拟地址。
 
 ![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/7.jpg)
 
-![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/8.jpg)
-
-![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/9.jpg)
-
-分析：子进程中的变量计数与父进程中的变量计数具有相同的虚拟地址。
-
 子进程的count值与父进程的count值相同。它们被映射到同一进程映像中的同一物理地址。
 
-父pro被挂起，直到vWorked子进程终止。
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/8.jpg)
+
+父进程被挂起，直到vfork的子进程终止。
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/9.jpg)
 
 子级在测试点之前退出，并且仅由父级执行
 
@@ -73,9 +77,15 @@
 
 执行截图：
 
-![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/3.png)
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/10.png)
 
-分析：父进程终止，剩下一个孤立的pid=15432。
+分析：
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/11.jpg)
+
+父进程终止，剩下一个孤立的pid=15432。
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/12.jpg)
 
 这里发生了什么？终端（bash）和分叉子级是异步工作的。
 
@@ -88,9 +98,15 @@
 
 执行截图：
 
-![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/4.png)
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/13.png)
 
-分析：父进程正在等待子进程终止。
+分析：
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/14.jpg)
+
+父进程正在等待子进程终止。
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/15.jpg)
 
 先由孩子完成，然后由家长完成的测试点
 
@@ -103,13 +119,11 @@
 
 执行截图：
 
-![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/5.png)
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/16.png)
 
-分析：睡眠者继承vWorked子级的pid（15477）
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/17.png)
 
-父pro在调用的点“execv”处恢复，vWorked pro终止，sleeper作为子进程派生到同一个childpid中，但具有重复的地址空间，并返回到父进程，没有任何堆栈损坏。父级和子级异步执行。
-
-任何方式父母需要等待他的孩子，或产卵睡眠专业可能成为孤儿
+分析：
 
 + 验证实验**alg.6-5-vfork-execv-wait.c**
 
@@ -120,11 +134,23 @@
 
 执行截图：
 
-![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/6.png)
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/18.png)
 
-分析：睡眠者继承vWorked子级的pid（15477）
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/19.png)
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/20.png)
+
+分析：
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/21.jpg)
+
+睡眠者继承vWorked子级的pid（15477）
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/22.jpg)
 
 父pro在调用的点“execv”处恢复，vWorked pro终止，sleeper作为子进程派生到同一个childpid中，但具有重复的地址空间，并返回到父进程，没有任何堆栈损坏。父级和子级异步执行。
+
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/23.jpg)
 
 任何方式父母需要等待他的孩子，或产卵睡眠专业可能成为孤儿
 
@@ -137,7 +163,7 @@
 
 执行截图：
 
-![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/6.png)
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/24.png)
 
 分析：bash是start main（）的父pro
 
