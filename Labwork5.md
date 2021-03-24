@@ -157,7 +157,7 @@ vfork()函数会创建一个新进程，即子进程，这个子进程直接共�
 
 跳出这个判断一个进程是子进程还是父进程的分支语句后，程序会执行一个打印语句，打印当前进程的进程号，并返回```EXIT_SUCCESS```代表正常退出。
 
-![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/6.jpg)
+![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/6.png)
 
 ![](http://stugeek.gitee.io/operating-system/Labwork5-pictures/7.jpg)
 
