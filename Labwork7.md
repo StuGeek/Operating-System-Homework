@@ -125,6 +125,11 @@
         exit(EXIT_SUCCESS);
     }
 
+执行程序命令：
+
+    gcc ShmMaxLimitsTest.c
+    ./a.out 1
+
 其中，语句```shmsize = sizeof(struct shared_struct)```确定了申请的共享内存的大小，从而对所能申请的共享内存的最大值进行测试。
 
 语句```shmid = shmget((key_t)key, shmsize, 0666|PERM)```根据之前所想要申请的共享内存大小```shmsize```创建共享内存对象，如果创建成功，那么程序正常执行，最后打印语句```The shared memory size is shmsize, which is under the max limits```，可以看到当创建成功时，共享内存的大小```shmsize```。
@@ -309,6 +314,11 @@
         printf("The stu3 is in the index %d\n", index);
         printf("---------------------------------------------------\n\n");
     }
+
+执行程序命令：
+
+    gcc SLList_MinHeap.c
+    ./a.out
 
 输出执行截图：
 
@@ -657,6 +667,11 @@
     }
 
 因为每次在一个终端运行程序，共享结构体```shared```都会进行一次初始化，而且其中的变量```operation_time```都会变成0， 所以为了程序的可运行性和测试方便，最好多个终端同时启动运行程序。
+
+执行程序命令：
+
+    gcc ipc-shmcon.c
+    ./a.out 1
 
 执行截图：
 
