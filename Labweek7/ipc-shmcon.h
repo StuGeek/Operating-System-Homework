@@ -1,3 +1,4 @@
+//ipc-shmcon.h文件
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,10 +14,6 @@
 
 #define BOOL int
 #define MAXSIZE 1024  //静态链表或堆的最大容量
-#define OP_PUSH 1
-#define OP_POP 2
-#define OP_FIND 3
-#define OP_MODIFY 4  
 
 //存储学生信息的结构
 typedef struct node {
