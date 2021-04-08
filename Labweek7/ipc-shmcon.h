@@ -36,8 +36,8 @@ typedef struct shared_struct {
     int headIndex;          //静态链表开头的结点在数组中的下标
     int size;               //静态链表目前存储的结点数目
     Stack unusedIndexs;     //静态链表中还未使用的下标，向静态链表中添加信息时可从中获取空闲下标
-    int lock;
-    int operation_time;
+    int lock;               //逻辑值lock，用来保证同一时间内只有一个进程进入共享内存操作
+    int operation_time;     //对共享结构体总的操作次数，方便测试用
 } StaticLinkList, *MinHeap;
 
 /*
