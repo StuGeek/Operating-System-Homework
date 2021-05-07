@@ -412,7 +412,7 @@ OpenMP将并行区域标识为可以并行运行的代码块。
 
 分析：
 
-![](http://stugeek.gitee.io/operating-system/Labwork10-pictures/10.png)
+![](http://stugeek.gitee.io/operating-system/Labwork10-pictures/12.png)
 
 可以看到，使用两个线程比不使用多线程进行矩阵加法计算速度要快，运行时间更短，说明使用多线程进行并行计算可以提高计算效率，但是使用四个线程比使用两个线程计算时间长，这是因为只有两个核，线程数量比核的数量多时，线程会被频繁切换，这样需要的时间就会变更长，反而会降低计算效率和速度。
 
