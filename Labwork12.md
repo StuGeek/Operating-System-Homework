@@ -111,7 +111,7 @@
 
 分析：
 
-![](http://stugeek.gitee.io/operating-system/Labwork12-pictures/2.jpg)
+![](http://stugeek.gitee.io/operating-system/Labwork12-pictures/2.png)
 
 可以看到，不同的fp_log指针指向的不同的文件流可以对应同一个线程私有变量```log_key```的值。
 
