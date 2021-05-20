@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/ipc.h>
+#include <sys/time.h>
 #include <sys/msg.h>
 #include <sys/syscall.h>
 #include <fcntl.h>
@@ -73,6 +74,7 @@ static void *executeTask(void *arg) {
 
 // 初始化线程池
 void initThreadpools(Threadpools *pools) {
+    int ret;
     // 任务队列的队首和队尾的坐标都为0
     pools->taskQueue.front = 0;
     pools->taskQueue.rear = 0;
@@ -80,7 +82,11 @@ void initThreadpools(Threadpools *pools) {
     pools->taskSum = TASK_NUM;
     // 创建线程池中的线程
     for(int i = 0; i < THREADS_NUM; ++i) {
-        pthread_create(&pools->threads[i], NULL, executeTask, (void *)pools);
+        ret = pthread_create(&pools->threads[i], NULL, executeTask, (void *)pools);
+        if(ret != 0) {
+            fprintf(stderr, "pthread_create error: %s\n", strerror(ret));
+            exit(1);
+        }
     }
 }
 
@@ -103,7 +109,7 @@ void addTask(Threadpools *pools, void *(*function)(void *arg), void *arg) {
 }
 
 // 任务函数
-static void *taskFunction(void *arg) {
+void *taskFunction(void *arg) {
     // 获取每个任务的任务号
     int *numptr = (int *)arg;
     int taskId = *numptr;
@@ -114,9 +120,11 @@ static void *taskFunction(void *arg) {
     sleep(1);
     // 打印任务完成信息和线程被复用
     printf("\t\t\t\tTask %d is finished and Thread tid = %ld is reused\n", taskId, gettid());
+    return 0;
 }
 
 int main() {
+    int ret;
     // 创建并初始化线程池
     Threadpools pools;
     initThreadpools(&pools);
@@ -136,7 +144,11 @@ int main() {
 
     // 主线程等待线程池中的线程全部结束后再继续
     for(int i = 0; i < THREADS_NUM; ++i) {
-        pthread_join(pools.threads[i], NULL);
+        ret = pthread_join(pools.threads[i], NULL);
+        if(ret != 0) {
+            fprintf(stderr, "pthread_join error: %s\n", strerror(ret));
+            exit(1);
+        }
     }
 
     // 所有任务都执行完，线程池也退出
