@@ -30,7 +30,7 @@ static void *ftn(void *arg)
 {
     // 获取线程编号
     int *numptr = (int *)arg;
-    int write_thread_num = *numptr;
+    int thread_num = *numptr;
     int lev, k;
 
     char buffer[BUFSIZ + 1];
@@ -38,19 +38,19 @@ static void *ftn(void *arg)
     // 最多有write_thread_num-1个线程等候室
     for (lev = 0; lev < write_thread_num-1; ++lev) {
         // 设置此线程的线程级别为lev，lev从0到write_thread_num-2，每次循环都会提升一次此线程的线程级别
-        level[write_thread_num] = lev;
+        level[thread_num] = lev;
         // 设置等候室中线程级别为lev的线程为此线程
-        waiting[lev] = write_thread_num;
+        waiting[lev] = thread_num;
         // 如果等候室中线程级别为lev的线程为此线程，那么线程被阻塞进入等待
-        while (waiting[lev] == write_thread_num) {
+        while (waiting[lev] == thread_num) {
             // 如果在此期间，任何线程级别小于此线程的线程j提升线程级别到或大于此线程，那么此线程将被踢出等候室，当被调度时退出while循环
             for (k = 0; k < write_thread_num; k++) {
                 // 从0到write_thread_num-1，如果存在不是这个线程的一个线程k，线程级别大于等于这个线程，那么退出for循环
-                if(level[k] >= lev && k != write_thread_num) {
+                if(level[k] >= lev && k != thread_num) {
                     break;
                 }
                 // 再次检查线程等候室数组中的线程级别为lev的线程是否此线程，如果不等于，退出for循环
-                if(waiting[lev] != write_thread_num) {
+                if(waiting[lev] != thread_num) {
                     break;
                 }
             }
@@ -74,13 +74,13 @@ static void *ftn(void *arg)
 
     // 写入信息之后，把共享结构体的成员变量written重新设为1，令缓冲区可读
     sprintf(buffer, "\"message from thread tid=%ld\"", gettid());
-    printf("\nwrite-thread-%d tid=%ld writes: %s\n", write_thread_num, gettid(), buffer);
+    printf("\nwrite-thread-%d tid=%ld writes: %s\n", thread_num, gettid(), buffer);
     strncpy(shared->mtext, buffer, TEXT_SIZE);
     shared->written = 1;
     // 临界区代码结束处
 
     // 将此线程在level数组中的线程级别设为-1，表示线程结束，可以让其它的线程级别为write_thread_num-2的线程退出while循环进入临界区
-    level[write_thread_num] = -1; 
+    level[thread_num] = -1; 
 
     pthread_exit(0);
 }
@@ -150,5 +150,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
-
