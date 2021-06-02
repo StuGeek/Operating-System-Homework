@@ -267,7 +267,7 @@ pthread_mutex_unlock(&mutex);
   
         ```c
         sem_t *sem;
-        sem = sem_open(“MYSEM", O_CREAT, 0666, 1);
+        sem = sem_open("MYSEM", O_CREAT, 0666, 1);
         ```
         + 命名信号量```MYSEM```被创建并初始化为1。它对其他进程具有读写访问权限。
     + 多个不相关的进程可以简单地通过引用信号量的名称，使用一个通用的命名信号量作为同步机制。
