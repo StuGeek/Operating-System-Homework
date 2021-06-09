@@ -17,6 +17,8 @@
 #define POLICY_PRIORITY_PEM 4     // 抢占式优先级调度策略
 #define POLICY_PRIORITY_NOT_PEM 5 // 非抢占式优先级调度策略
 
+#define MAX_TASK_NUM 100 // 最大任务个数
+
 typedef struct node {
     int arrival_time;     // 到达时间
     int WCT;              // 最坏预期执行时间
@@ -38,13 +40,12 @@ typedef struct {
 Scheduler sched; // 调度器
 sigset_t zeromask; // 阻塞线程函数sigsuspend()所用参数
 long wait_sum_time = 0; // 单个线程等待总时间
-int task_num = 0;  // 任务数量
 
 long begin_us, run_us; // 总计时器部分，测试用
 struct timeval t_time;
 
 // 初始化调度器
-void init_scheduler();
+void init_scheduler(int task_num);
 // 创建任务管理信息结点
 Tasknode* creat_thread_node(int arrival_time, int WCT, int priority);
 
@@ -73,12 +74,13 @@ void thread_cont_sighand(int signo);
 void sched_run_sighand(int signo);
 
 // 打印任务信息列表，测试用
-void print_tasklist(int *arrival_time, int *WCT, int *priority);
+void print_tasklist(int *arrival_time, int *WCT, int *priority, int task_num);
 // 计算任务平均等待时间
-double cal_aver_wait_time(int *arrival_time, int *WCT, int *priority, int sched_policy);
+double cal_aver_wait_time(int *arrival_time, int *WCT, int *priority, int task_num, int sched_policy);
 
 // 调度器运行线程
 void *schedule_runner(void *arg) {
+    int task_num = *(int *)arg;
     // 当完成任务个数等于总任务个数时，调度器线程退出
     while (sched.finished_task != 5 * task_num);
     pthread_exit(0);
@@ -102,7 +104,7 @@ Tasknode* creat_thread_node(int arrival_time, int WCT, int priority) {
 }
 
 // 初始化调度器
-void init_scheduler() {
+void init_scheduler(int task_num) {
     // 管理链队列的表头为空
     sched.head = NULL;
     // 调度策略默认为先到先服务
@@ -112,7 +114,7 @@ void init_scheduler() {
     // 初始化调度器互斥锁
     pthread_mutex_init(&sched.sched_mutex, NULL);
     // 创建调度器运行线程
-    int ret = pthread_create(&sched.sched_ptid, NULL, &schedule_runner, NULL);
+    int ret = pthread_create(&sched.sched_ptid, NULL, &schedule_runner, &task_num);
     if (ret != 0) {
         fprintf(stderr, "init_scheduler(): pthread_create error: %s\n", strerror(ret));
         exit(1);
@@ -378,7 +380,7 @@ void sched_run_sighand(int signo) {
 }
 
 // 打印任务信息列表，测试用
-void print_tasklist(int *arrival_time, int *WCT, int *priority) {
+void print_tasklist(int *arrival_time, int *WCT, int *priority, int task_num) {
     printf("Task list:\n");
     printf("------------------------------\n");
     printf("|Id|Arrival time|WCT|Priority|\n");
@@ -391,9 +393,9 @@ void print_tasklist(int *arrival_time, int *WCT, int *priority) {
 }
 
 // 计算任务平均等待时间
-double cal_aver_wait_time(int *arrival_time, int *WCT, int *priority, int sched_policy) {
+double cal_aver_wait_time(int *arrival_time, int *WCT, int *priority, int task_num, int sched_policy) {
     int ret;
-    pthread_t ptid[task_num];
+    pthread_t ptid[MAX_TASK_NUM];
     double aver_wait_time;
     printf("\n----------------------------------------------------------\n");
     printf("schedule policy: ");
@@ -416,7 +418,7 @@ double cal_aver_wait_time(int *arrival_time, int *WCT, int *priority, int sched_
             break;
     }
     // 打印任务列表
-    print_tasklist(arrival_time, WCT, priority);
+    print_tasklist(arrival_time, WCT, priority, task_num);
     // 设置调度策略
     sched.schedule_policy = sched_policy;
     wait_sum_time = 0;
@@ -452,12 +454,13 @@ double cal_aver_wait_time(int *arrival_time, int *WCT, int *priority, int sched_
 }
 
 int main() {
+    int arrival_time[MAX_TASK_NUM];
+    int WCT[MAX_TASK_NUM];
+    int priority[MAX_TASK_NUM];
+
+    int task_num;
     printf("Please input the number of tasks: ");
     scanf("%d", &task_num);
-    int *arrival_time = (int *)malloc(sizeof(int) * task_num);
-    int *WCT = (int *)malloc(sizeof(int) * task_num);
-    int *priority = (int *)malloc(sizeof(int) * task_num);
-    pthread_t *ptid  = (pthread_t *)malloc(sizeof(int) * task_num);
 
     // 设置不同捕捉信号的信号处理函数
     struct sigaction act1, act2, act3;
@@ -481,7 +484,7 @@ int main() {
     sigaction(SIGUSR2, &act3, NULL);
 
     // 初始化调度器
-    init_scheduler();
+    init_scheduler(task_num);
 
     // 输入每个任务的到达时间，最长预期运行时间，优先级等
     for (int i = 0; i < task_num; i++) {
@@ -489,11 +492,11 @@ int main() {
         scanf("%d %d %d", &arrival_time[i], &WCT[i], &priority[i]);
     }
 
-    double aver_wait_time_fcfs = cal_aver_wait_time(arrival_time, WCT, priority, POLICY_FCFS);
-    double aver_wait_time_sjf_pem = cal_aver_wait_time(arrival_time, WCT, priority, POLICY_SJF_PEM);
-    double aver_wait_time_sjf_not_pem = cal_aver_wait_time(arrival_time, WCT, priority, POLICY_SJF_NOT_PEM);
-    double aver_wait_time_priority_pem = cal_aver_wait_time(arrival_time, WCT, priority, POLICY_PRIORITY_PEM);
-    double aver_wait_time_priority_not_pem = cal_aver_wait_time(arrival_time, WCT, priority, POLICY_PRIORITY_NOT_PEM);
+    double aver_wait_time_fcfs = cal_aver_wait_time(arrival_time, WCT, priority, task_num, POLICY_FCFS);
+    double aver_wait_time_sjf_pem = cal_aver_wait_time(arrival_time, WCT, priority, task_num, POLICY_SJF_PEM);
+    double aver_wait_time_sjf_not_pem = cal_aver_wait_time(arrival_time, WCT, priority, task_num, POLICY_SJF_NOT_PEM);
+    double aver_wait_time_priority_pem = cal_aver_wait_time(arrival_time, WCT, priority, task_num, POLICY_PRIORITY_PEM);
+    double aver_wait_time_priority_not_pem = cal_aver_wait_time(arrival_time, WCT, priority, task_num, POLICY_PRIORITY_NOT_PEM);
 
     // 打印不同调度策略平均等待时间列表
     printf("\nAverage waiting time list(sec):\n");
@@ -506,9 +509,4 @@ int main() {
     printf("|  Priority(preemptive)  |     %10lf     |\n", aver_wait_time_priority_pem);
     printf("|Priority(not preemptive)|     %10lf     |\n", aver_wait_time_priority_not_pem);
     printf("-----------------------------------------------\n");
-
-    free(arrival_time);
-    free(WCT);
-    free(priority);
-    free(ptid);
 }
