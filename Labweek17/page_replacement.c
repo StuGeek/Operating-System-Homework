@@ -4,7 +4,7 @@
 #include <string.h>
 #include <time.h>
 
-#define REFERENCE_STRING_LENGTH 20  // 引用串长度
+#define REFERENCE_STRING_LENGTH 20  // 引用串的长度
 #define PAGE_SIZE 10                // 页的大小
 #define FRAME_SIZE 5                // 页帧大小
 
