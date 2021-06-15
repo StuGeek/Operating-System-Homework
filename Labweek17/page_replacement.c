@@ -4,7 +4,7 @@
 #include <string.h>
 #include <time.h>
 
-#define REFERENCE_STRING_LENGTH 20  // 引用串的长度
+#define REFERENCE_STRING_LENGTH 20  // 引用串长度
 #define PAGE_SIZE 10                // 页的大小
 #define FRAME_SIZE 5                // 页帧大小
 
@@ -78,8 +78,8 @@ void print_pageframe(int *page_frame) {
 
 // FIFO页面置换算法
 void FIFO(int *reference_string) {
-    printf("\n------------------------------------\n");
-    printf("page-replacement algorithm: FIFO\n");
+    printf("\n---------------------------------------\n");
+    printf("page-replacement algorithm: FIFO\n\n");
     
     // 初始化页帧中页码数字都为-1
     int page_frame[FRAME_SIZE];
@@ -110,7 +110,7 @@ void FIFO(int *reference_string) {
         }
     }
 
-    printf("------------------------------------\n");
+    printf("---------------------------------------\n");
 }
 
 // 创建用堆栈实现的LRU算法所使用的表示页的点结构
@@ -169,8 +169,8 @@ void print_LRU_stack(PageStack *stack) {
 
 // 用堆栈实现的LRU算法
 void LRU_stack(int *reference_string) {
-    printf("\n------------------------------------\n");
-    printf("page-replacement algorithm: LRU implemented by stack\n");
+    printf("\n------------------------------------------------------------------\n");
+    printf("page-replacement algorithm: LRU implemented by stack\n\n");
 
     // 初始化页帧中页码数字都为-1
     int page_frame[FRAME_SIZE];
@@ -234,7 +234,7 @@ void LRU_stack(int *reference_string) {
 
     free_PageStack(&stack);
 
-    printf("------------------------------------\n");
+    printf("------------------------------------------------------------------\n");
 }
 
 // 将二维矩阵的某一行全部设置为1
@@ -285,8 +285,8 @@ void print_LRU_matrix(int matrix[FRAME_SIZE][FRAME_SIZE]) {
 
 // 用矩阵实现的LRU算法
 void LRU_matrix(int *reference_string) {
-    printf("\n------------------------------------\n");
-    printf("page-replacement algorithm: LRU implemented by matrix\n");
+    printf("\n------------------------------------------------------------------\n");
+    printf("page-replacement algorithm: LRU implemented by matrix\n\n");
 
     // 初始化页帧中页码数字都为-1
     int page_frame[FRAME_SIZE];
@@ -330,7 +330,7 @@ void LRU_matrix(int *reference_string) {
         }
     }
 
-    printf("------------------------------------\n");
+    printf("------------------------------------------------------------------\n");
 }
 
 // 创建第二次机会页面算法所使用的表示页的点结构
@@ -399,8 +399,9 @@ void print_PageQueue(PageQueue *queue) {
 
 // 第二次机会算法
 void Second_Chance(int *reference_string) {
-    printf("\n------------------------------------\n");
-    printf("page-replacement algorithm: Second chance(\"*\" means the reference bit is 1, \"(C)\" means the clock pointer's position)\n");
+    printf("\n------------------------------------------------------------------\n");
+    printf("page-replacement algorithm: Second chance\n");
+    printf("(\"*\" means the reference bit is 1, \"(C)\" means the clock pointer's position)\n\n");
 
     // 初始化页帧中页码数字都为-1
     int page_frame[FRAME_SIZE];
@@ -451,7 +452,7 @@ void Second_Chance(int *reference_string) {
 
     free_PageQueue(&queue);
 
-    printf("------------------------------------\n");
+    printf("------------------------------------------------------------------\n");
 }
 
 // 打印引用串
