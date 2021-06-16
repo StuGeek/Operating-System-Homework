@@ -647,13 +647,13 @@ int main() {
 
 执行截图：
 
-![](http://stugeek.gitee.io/operating-system/Labwork16-pictures/10.png)
+![](http://stugeek.gitee.io/operating-system/Labwork17-pictures/10.png)
 
-![](http://stugeek.gitee.io/operating-system/Labwork16-pictures/11.png)
+![](http://stugeek.gitee.io/operating-system/Labwork17-pictures/11.png)
 
-![](http://stugeek.gitee.io/operating-system/Labwork16-pictures/12.png)
+![](http://stugeek.gitee.io/operating-system/Labwork17-pictures/12.png)
 
-![](http://stugeek.gitee.io/operating-system/Labwork16-pictures/13.png)
+![](http://stugeek.gitee.io/operating-system/Labwork17-pictures/13.png)
 
 分析过程见图。
 
@@ -667,12 +667,12 @@ int main() {
 
 执行截图：
 
-![](http://stugeek.gitee.io/operating-system/Labwork16-pictures/14.png)
+![](http://stugeek.gitee.io/operating-system/Labwork17-pictures/14.png)
 
-![](http://stugeek.gitee.io/operating-system/Labwork16-pictures/15.png)
+![](http://stugeek.gitee.io/operating-system/Labwork17-pictures/15.png)
 
-![](http://stugeek.gitee.io/operating-system/Labwork16-pictures/16.png)
+![](http://stugeek.gitee.io/operating-system/Labwork17-pictures/16.png)
 
-![](http://stugeek.gitee.io/operating-system/Labwork16-pictures/17.png)
+![](http://stugeek.gitee.io/operating-system/Labwork17-pictures/17.png)
 
 分析过程见图。
