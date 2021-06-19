@@ -5,7 +5,7 @@
 #include <time.h>
 
 #define CYLINDER_REQ_NUM 8  // I/O请求块的柱面数目
-#define CYLINDER_NUM 200    // 硬盘柱面数目
+#define CYLINDER_NUM 200    // 总的柱面数目
 
 // 取一个数的绝对值
 int abs_int(int num);
