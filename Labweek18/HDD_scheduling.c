@@ -129,7 +129,7 @@ void SCAN(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) {
     // 向一个方向扫描直到尽头
     while (cylinder_head >= 0 && cylinder_head < CYLINDER_NUM) {
         // 如果磁头在请求处理的柱面上
-        if (cylinders[cylinder_head] > 0) {
+        while (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             // 将磁头移动距离加到磁头移动总距离中
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
@@ -170,7 +170,7 @@ void SCAN(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) {
 
     // 向另一个方向继续扫描
     while (cylinder_head >= 0 && cylinder_head < CYLINDER_NUM) {
-        if (cylinders[cylinder_head] > 0) {
+        while (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
             pre_cylinder_head = cylinder_head;
@@ -211,7 +211,7 @@ void C_SCAN(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) 
     // 向一个方向扫描直到尽头
     while (cylinder_head >= 0 && cylinder_head < CYLINDER_NUM) {
         // 如果磁头在请求处理的柱面上
-        if (cylinders[cylinder_head] > 0) {
+        while (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             // 将磁头移动距离加到磁头移动总距离中
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
@@ -257,7 +257,7 @@ void C_SCAN(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) 
 
     // 向同一方向继续扫描
     while (cylinder_head >= 0 && cylinder_head < CYLINDER_NUM) {
-        if (cylinders[cylinder_head] > 0) {
+        while (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
             pre_cylinder_head = cylinder_head;
@@ -312,7 +312,7 @@ void LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) {
     // 向一个方向扫描直到最远请求
     while (cylinder_head >= cylinder_req_min && cylinder_head <= cylinder_req_max) {
         // 如果磁头在请求处理的柱面上
-        if (cylinders[cylinder_head] > 0) {
+        while (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             // 将磁头移动距离加到磁头移动总距离中
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
@@ -347,7 +347,7 @@ void LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) {
 
     // 向另一个方向继续扫描
     while (cylinder_head >= cylinder_req_min && cylinder_head <= cylinder_req_max) {
-        if (cylinders[cylinder_head] > 0) {
+        while (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
             pre_cylinder_head = cylinder_head;
@@ -402,7 +402,7 @@ void C_LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) 
     // 向一个方向扫描直到最远请求
     while (cylinder_head >= cylinder_req_min && cylinder_head <= cylinder_req_max) {
         // 如果磁头在请求处理的柱面上
-        if (cylinders[cylinder_head] > 0) {
+        while (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             // 将磁头移动距离加到磁头移动总距离中
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
@@ -431,7 +431,7 @@ void C_LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) 
 
     // 向同一方向继续扫描
     while (cylinder_head >= cylinder_req_min && cylinder_head <= cylinder_req_max) {
-        if (cylinders[cylinder_head] > 0) {
+        while (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
             pre_cylinder_head = cylinder_head;
