@@ -276,7 +276,7 @@ void C_SCAN(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) 
     printf("--------------------------------------------------------\n");
 }
 
-// 电梯调度算法
+// LOOK电梯调度算法
 void LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) {
     printf("\n--------------------------------------------------------\n");
     printf("HDD Scheduling Algorithm: LOOK\n");
@@ -366,7 +366,7 @@ void LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) {
     printf("--------------------------------------------------------\n");
 }
 
-// 循环电梯调度算法
+// C-LOOK循环电梯调度算法
 void C_LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) {
     printf("\n--------------------------------------------------------\n");
     printf("HDD Scheduling Algorithm: C-LOOK\n");
