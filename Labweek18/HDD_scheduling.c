@@ -1,12 +1,11 @@
 //HDD_scheduling.c文件
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
 #define CYLINDER_REQ_NUM 8  // I/O请求块的柱面数目
 #define CYLINDER_NUM 200    // 硬盘柱面数目
-#define REQUEST 1           // 硬盘上的相应柱面处于请求处理状态
-#define NO_REQUEST 0        // 硬盘上的相应柱面没有处于请求处理状态
 
 // 取一个数的绝对值
 int abs_int(int num);
@@ -21,7 +20,7 @@ void C_LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir);
 
 // 找到距离当前磁头最近的请求处理的柱面
 int find_cylinder_min_seek_dis(int *cylinders, int cylinder_head);
-// 将I/O请求块的柱面在硬盘上的位置相应地设置为请求处理状态
+// 将I/O请求块的柱面在硬盘上设置相应的请求
 void set_cylinders(int *cylinders, int *cylinder_req);
 // 打印I/O请求块的柱面的信息
 void print_cylinder_req(int *cylinder_req);
@@ -45,13 +44,13 @@ void FCFS(int *cylinders, int *cylinder_req, int cylinder_head) {
     printf("\n");
 
     // 初始化硬盘柱面，设置相应柱面请求处理
-    memset(cylinders, NO_REQUEST, CYLINDER_NUM * sizeof(int));
+    memset(cylinders, 0, CYLINDER_NUM * sizeof(int));
     set_cylinders(cylinders, cylinder_req);
 
     int head_move_sum = 0;
     printf("head's movement: ");
     // 打印一开始磁头处于柱面位置
-    if (cylinders[cylinder_head] == NO_REQUEST) {
+    if (cylinders[cylinder_head] == 0) {
         printf("%d ", cylinder_head);
     }
 
@@ -59,8 +58,8 @@ void FCFS(int *cylinders, int *cylinder_req, int cylinder_head) {
         int cylinder_id = cylinder_req[i];
         // 直接按照柱面请求顺序处理请求柱面
         printf("%d ", cylinder_id);
-        // 处理后的柱面在硬盘上的状态为请求处理完毕
-        cylinders[cylinder_id] = NO_REQUEST;
+        // 处理后的柱面在硬盘上的请求数减一
+        cylinders[cylinder_id]--;
         // 将磁头移动距离加到磁头移动总距离中
         head_move_sum += abs_int(cylinder_head - cylinder_id);
         // 磁头位置为处理完的柱面位置
@@ -80,13 +79,13 @@ void SSTF(int *cylinders, int *cylinder_req, int cylinder_head) {
     printf("\n");
 
     // 初始化硬盘柱面，设置相应柱面请求处理
-    memset(cylinders, NO_REQUEST, CYLINDER_NUM * sizeof(int));
+    memset(cylinders, 0, CYLINDER_NUM * sizeof(int));
     set_cylinders(cylinders, cylinder_req);
 
     int head_move_sum = 0;
     printf("head's movement: ");
     // 打印一开始磁头处于柱面位置
-    if (cylinders[cylinder_head] == NO_REQUEST) {
+    if (cylinders[cylinder_head] == 0) {
         printf("%d ", cylinder_head);
     }
 
@@ -94,8 +93,8 @@ void SSTF(int *cylinders, int *cylinder_req, int cylinder_head) {
         int cylinder_id = find_cylinder_min_seek_dis(cylinders, cylinder_head);
         // 直接按照柱面请求顺序处理请求柱面
         printf("%d ", cylinder_id);
-        // 处理后的柱面在硬盘上的状态为请求处理完毕
-        cylinders[cylinder_id] = NO_REQUEST;
+        // 处理后的柱面在硬盘上的请求数减一
+        cylinders[cylinder_id]--;
         // 将磁头移动距离加到磁头移动总距离中
         head_move_sum += abs_int(cylinder_head - cylinder_id);
         // 磁头位置为处理完的柱面位置
@@ -116,28 +115,28 @@ void SCAN(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) {
     printf("\n");
 
     // 初始化硬盘柱面，设置相应柱面请求处理
-    memset(cylinders, NO_REQUEST, CYLINDER_NUM * sizeof(int));
+    memset(cylinders, 0, CYLINDER_NUM * sizeof(int));
     set_cylinders(cylinders, cylinder_req);
 
     int pre_cylinder_head = cylinder_head;
     int head_move_sum = 0;
     printf("head's movement: ");
     // 打印一开始磁头处于柱面位置
-    if (cylinders[cylinder_head] == NO_REQUEST) {
+    if (cylinders[cylinder_head] == 0) {
         printf("%d ", cylinder_head);
     }
 
     // 向一个方向扫描直到尽头
     while (cylinder_head >= 0 && cylinder_head < CYLINDER_NUM) {
         // 如果磁头在请求处理的柱面上
-        if (cylinders[cylinder_head] == REQUEST) {
+        if (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             // 将磁头移动距离加到磁头移动总距离中
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
             // 更新磁头上一次处在的位置
             pre_cylinder_head = cylinder_head;
-            // 处理后的柱面在硬盘上的状态为请求处理完毕
-            cylinders[cylinder_head] = NO_REQUEST;
+            // 处理后的柱面在硬盘上的请求数减一
+            cylinders[cylinder_head]--;
         }
         // 如果head_dir为0，向朝0的方向扫描
         if (head_dir == 0) {
@@ -171,11 +170,11 @@ void SCAN(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) {
 
     // 向另一个方向继续扫描
     while (cylinder_head >= 0 && cylinder_head < CYLINDER_NUM) {
-        if (cylinders[cylinder_head] == REQUEST) {
+        if (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
             pre_cylinder_head = cylinder_head;
-            cylinders[cylinder_head] = NO_REQUEST;
+            cylinders[cylinder_head]--;
         }
         if (head_dir == 0) {
             cylinder_head--;
@@ -198,28 +197,28 @@ void C_SCAN(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) 
     printf("\n");
 
     // 初始化硬盘柱面，设置相应柱面请求处理
-    memset(cylinders, NO_REQUEST, CYLINDER_NUM * sizeof(int));
+    memset(cylinders, 0, CYLINDER_NUM * sizeof(int));
     set_cylinders(cylinders, cylinder_req);
 
     int pre_cylinder_head = cylinder_head;
     int head_move_sum = 0;
     printf("head's movement: ");
     // 打印一开始磁头处于柱面位置
-    if (cylinders[cylinder_head] == NO_REQUEST) {
+    if (cylinders[cylinder_head] == 0) {
         printf("%d ", cylinder_head);
     }
 
     // 向一个方向扫描直到尽头
     while (cylinder_head >= 0 && cylinder_head < CYLINDER_NUM) {
         // 如果磁头在请求处理的柱面上
-        if (cylinders[cylinder_head] == REQUEST) {
+        if (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             // 将磁头移动距离加到磁头移动总距离中
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
             // 更新磁头上一次处在的位置
             pre_cylinder_head = cylinder_head;
-            // 处理后的柱面在硬盘上的状态为请求处理完毕
-            cylinders[cylinder_head] = NO_REQUEST;
+            // 处理后的柱面在硬盘上的请求数减一
+            cylinders[cylinder_head]--;
         }
         // 如果head_dir为0，向朝0的方向扫描
         if (head_dir == 0) {
@@ -253,17 +252,17 @@ void C_SCAN(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) 
     }
     pre_cylinder_head = cylinder_head;
 
-    if (cylinders[cylinder_head] == NO_REQUEST) {
+    if (cylinders[cylinder_head] == 0) {
         printf("%d ", cylinder_head);
     }
 
     // 向同一方向继续扫描
     while (cylinder_head >= 0 && cylinder_head < CYLINDER_NUM) {
-        if (cylinders[cylinder_head] == REQUEST) {
+        if (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
             pre_cylinder_head = cylinder_head;
-            cylinders[cylinder_head] = NO_REQUEST;
+            cylinders[cylinder_head]--;
         }
         if (head_dir == 0) {
             cylinder_head--;
@@ -286,14 +285,14 @@ void LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) {
     printf("\n");
 
     // 初始化硬盘柱面，设置相应柱面请求处理
-    memset(cylinders, NO_REQUEST, CYLINDER_NUM * sizeof(int));
+    memset(cylinders, 0, CYLINDER_NUM * sizeof(int));
     set_cylinders(cylinders, cylinder_req);
 
     int pre_cylinder_head = cylinder_head;
     int head_move_sum = 0;
     printf("head's movement: ");
     // 打印一开始磁头处于柱面位置
-    if (cylinders[cylinder_head] == NO_REQUEST) {
+    if (cylinders[cylinder_head] == 0) {
         printf("%d ", cylinder_head);
     }
 
@@ -314,14 +313,14 @@ void LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) {
     // 向一个方向扫描直到最远请求
     while (cylinder_head >= cylinder_req_min && cylinder_head <= cylinder_req_max) {
         // 如果磁头在请求处理的柱面上
-        if (cylinders[cylinder_head] == REQUEST) {
+        if (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             // 将磁头移动距离加到磁头移动总距离中
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
             // 更新磁头上一次处在的位置
             pre_cylinder_head = cylinder_head;
-            // 处理后的柱面在硬盘上的状态为请求处理完毕
-            cylinders[cylinder_head] = NO_REQUEST;
+            // 处理后的柱面在硬盘上的请求数减一
+            cylinders[cylinder_head]--;
         }
         // 如果head_dir为0，向朝0的方向扫描
         if (head_dir == 0) {
@@ -349,11 +348,11 @@ void LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) {
 
     // 向另一个方向继续扫描
     while (cylinder_head >= cylinder_req_min && cylinder_head <= cylinder_req_max) {
-        if (cylinders[cylinder_head] == REQUEST) {
+        if (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
             pre_cylinder_head = cylinder_head;
-            cylinders[cylinder_head] = NO_REQUEST;
+            cylinders[cylinder_head]--;
         }
         if (head_dir == 0) {
             cylinder_head--;
@@ -376,14 +375,14 @@ void C_LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) 
     printf("\n");
 
     // 初始化硬盘柱面，设置相应柱面请求处理
-    memset(cylinders, NO_REQUEST, CYLINDER_NUM * sizeof(int));
+    memset(cylinders, 0, CYLINDER_NUM * sizeof(int));
     set_cylinders(cylinders, cylinder_req);
 
     int pre_cylinder_head = cylinder_head;
     int head_move_sum = 0;
     printf("head's movement: ");
     // 打印一开始磁头处于柱面位置
-    if (cylinders[cylinder_head] == NO_REQUEST) {
+    if (cylinders[cylinder_head] == 0) {
         printf("%d ", cylinder_head);
     }
 
@@ -404,14 +403,14 @@ void C_LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) 
     // 向一个方向扫描直到最远请求
     while (cylinder_head >= cylinder_req_min && cylinder_head <= cylinder_req_max) {
         // 如果磁头在请求处理的柱面上
-        if (cylinders[cylinder_head] == REQUEST) {
+        if (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             // 将磁头移动距离加到磁头移动总距离中
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
             // 更新磁头上一次处在的位置
             pre_cylinder_head = cylinder_head;
-            // 处理后的柱面在硬盘上的状态为请求处理完毕
-            cylinders[cylinder_head] = NO_REQUEST;
+            // 处理后的柱面在硬盘上的请求数减一
+            cylinders[cylinder_head]--;
         }
         // 如果head_dir为0，向朝0的方向扫描
         if (head_dir == 0) {
@@ -433,11 +432,11 @@ void C_LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) 
 
     // 向同一方向继续扫描
     while (cylinder_head >= cylinder_req_min && cylinder_head <= cylinder_req_max) {
-        if (cylinders[cylinder_head] == REQUEST) {
+        if (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
             head_move_sum += abs_int(cylinder_head - pre_cylinder_head);
             pre_cylinder_head = cylinder_head;
-            cylinders[cylinder_head] = NO_REQUEST;
+            cylinders[cylinder_head]--;
         }
         if (head_dir == 0) {
             cylinder_head--;
@@ -460,13 +459,13 @@ int find_cylinder_min_seek_dis(int *cylinders, int cylinder_head) {
     while (find_head_dir0 >= 0 || find_head_dir1 < CYLINDER_NUM) {
         // 每次两个变量移动相同距离查找，当找到有请求的柱面，就是距离磁头最近的柱面，直接返回
         if (find_head_dir0 >= 0) {
-            if (cylinders[find_head_dir0] == REQUEST) {
+            if (cylinders[find_head_dir0] > 0) {
                 return find_head_dir0;
             }
             find_head_dir0--;
         }
         if (find_head_dir1 < CYLINDER_NUM) {
-            if (cylinders[find_head_dir1] == REQUEST) {
+            if (cylinders[find_head_dir1] > 0) {
                 return find_head_dir1;
             }
             find_head_dir1++;
@@ -476,11 +475,12 @@ int find_cylinder_min_seek_dis(int *cylinders, int cylinder_head) {
     return -1;
 }
 
-// 将I/O请求块的柱面在硬盘上的位置相应地设置为请求处理状态
+// 将I/O请求块的柱面在硬盘上设置相应的请求
 void set_cylinders(int *cylinders, int *cylinder_req) {
     for(int i = 0; i < CYLINDER_REQ_NUM; ++i) {
         int cylinder_id = cylinder_req[i];
-        cylinders[cylinder_id] = REQUEST;
+        // 可能同一柱面不止一个请求，所以请求加一
+        cylinders[cylinder_id]++;
     }
 }
 
@@ -522,7 +522,7 @@ int main () {
     head_dir = num;*/
 
     // 手动输入的方式产生测试样例
-    printf("Please input the queue with requests for cylinders:\n");
+    printf("Please input the queue with 1s for cylinders:\n");
     for(int i = 0; i < CYLINDER_REQ_NUM; ++i) {
         scanf("%d", &cylinder_req[i]);
     }
