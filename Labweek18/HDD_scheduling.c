@@ -246,8 +246,7 @@ void C_SCAN(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) 
     // 令磁头直接到达另一侧尽头
     if (cylinder_head == 0) {
         cylinder_head = CYLINDER_NUM - 1;
-    }
-    if (cylinder_head == CYLINDER_NUM - 1) {
+    } else if (cylinder_head == CYLINDER_NUM - 1) {
         cylinder_head = 0;
     }
     pre_cylinder_head = cylinder_head;
