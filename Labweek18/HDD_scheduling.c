@@ -522,7 +522,7 @@ int main () {
     head_dir = num;*/
 
     // 手动输入的方式产生测试样例
-    printf("Please input the queue with 1s for cylinders:\n");
+    printf("Please input the queue with requests for cylinders:\n");
     for(int i = 0; i < CYLINDER_REQ_NUM; ++i) {
         scanf("%d", &cylinder_req[i]);
     }
