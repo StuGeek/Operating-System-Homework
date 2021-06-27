@@ -99,6 +99,7 @@ typedef struct {
 
 **（3）、物理内存页管理器框架`pmm_manager`：**
 
+```c
 struct pmm_manager {
     const char *name; //物理内存页管理器的名字
     void (*init)(void); //初始化内存管理器
@@ -108,6 +109,7 @@ struct pmm_manager {
     size_t (*nr_free_pages)(void); //返回当前剩余的空闲页数
     void (*check)(void); //用于检测分配/释放实现是否正确的辅助函数
 };
+```
 
 **（4）、双向链表`list`结构：**
 
