@@ -5,8 +5,9 @@
 + 实验内容：进程间通信—共享内存。
    
     (1)、验证：编译运行课件 Lecture 08 例程代码：
-        + Linux 系统调用示例 reader-writer 问题：Algorithms 8-1 ~ 8-3.
-        + POSIX API 应用示例 producer-consumer 问题：Algorithms 8-4 ~ 8-5.
+    + Linux 系统调用示例 reader-writer 问题：Algorithms 8-1 ~ 8-3.
+    + POSIX API 应用示例 producer-consumer 问题：Algorithms 8-4 ~ 8-5.
+
     (2)、设计：Alg.8-1 ~ 8-3 示例只解决单字符串的读写。修改程序将共享空间组织成一个结构类型（比如学号、姓名）的循环队列进行 FIFO 操作，采用共享内存变量控制队列数据的同步（参考数据结构课程有关内容）。
 
 ## 实验环境
