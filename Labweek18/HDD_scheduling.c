@@ -309,8 +309,8 @@ void LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) {
         }
     }
 
-    // 向一个方向扫描直到最远请求
-    while (cylinder_head >= cylinder_req_min && cylinder_head <= cylinder_req_max) {
+    // 向一个方向扫描
+    while (cylinder_head >= 0 && cylinder_head < CYLINDER_NUM) {
         // 如果磁头在请求处理的柱面上
         while (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
@@ -331,10 +331,10 @@ void LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) {
     }
 
     // 令磁头到达一侧最远请求
-    if (cylinder_head == cylinder_req_min - 1) {
+    if (cylinder_head == -1) {
         cylinder_head = cylinder_req_min;
     }
-    if (cylinder_head == cylinder_req_max + 1) {
+    if (cylinder_head == CYLINDER_NUM) {
         cylinder_head = cylinder_req_max;
     }
 
@@ -399,8 +399,8 @@ void C_LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) 
         }
     }
 
-    // 向一个方向扫描直到最远请求
-    while (cylinder_head >= cylinder_req_min && cylinder_head <= cylinder_req_max) {
+    // 向一个方向扫描
+    while (cylinder_head >= 0 && cylinder_head < CYLINDER_NUM) {
         // 如果磁头在请求处理的柱面上
         while (cylinders[cylinder_head] > 0) {
             printf("%d ", cylinder_head);
@@ -421,10 +421,10 @@ void C_LOOK(int *cylinders, int *cylinder_req, int cylinder_head, int head_dir) 
     }
 
     // 令磁头到达另一侧最远请求
-    if (cylinder_head == cylinder_req_min - 1) {
+    if (cylinder_head == -1) {
         cylinder_head = cylinder_req_max;
     }
-    if (cylinder_head == cylinder_req_max + 1) {
+    if (cylinder_head == CYLINDER_NUM) {
         cylinder_head = cylinder_req_min;
     }
     pre_cylinder_head = cylinder_head;

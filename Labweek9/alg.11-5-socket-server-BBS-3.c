@@ -372,13 +372,13 @@ int main(int argc, char *argv[])
         perror("fd_msg pipe()");
     }
 
-    // 所有客户端的状态都被初始化为STAT_EMPTY空状态，昵称为"Anonymous"匿名
+    // 所有sn_attri数组元素的状态都被初始化为STAT_EMPTY空状态，昵称为"Anonymous"匿名
     for (int i = 0; i <= MAX_CONN_NUM; i++) {
         sn_attri[i].stat = STAT_EMPTY;
         strcpy(sn_attri[i].nickname, "Anonymous");
     }
 
-    // 第一个客户端的昵称为"Console"控制台
+    // 第一个sn_attri数组元素的昵称为"Console"控制台
     strcpy(sn_attri[0].nickname, "Console");
    
     // 使用socket()函数创建一个socket的描述符返回给server_fd，AF_INET代表使用IPV4协议，SOCK_STREAM对应TCP协议，0为自动选择协议类型，这里对应TCP

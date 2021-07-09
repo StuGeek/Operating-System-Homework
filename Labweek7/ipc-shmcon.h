@@ -13,7 +13,7 @@
     } while(0)
 
 #define BOOL int
-#define MAXSIZE 1024  //静态链表或堆的最大容量
+#define MAXSIZE 1024  //静态链表或堆的最大容量 
 
 //存储学生信息的结构
 typedef struct node {

@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     void *shmptr;
     struct shared_struct *shared; /* structured shm */
     pid_t childpid1, childpid2;
-    char pathname[80], key_str[10], cmd_str[80];
+    char pathname[80], key_str[10];
     int shmsize, ret;
 
     shmsize = sizeof(struct shared_struct); /* 共享内存的大小 */

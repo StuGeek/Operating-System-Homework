@@ -439,7 +439,9 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
     strcpy(fifoname, argv[1]);
+    // access()函数用来判断是否有读取文件的权限，其中参数fifoname代表FIFO文件路径名，F_OK用来判断FIFO文件是否存在，如果返回值为-1管道文件不存在，那么创建文件
     if(access(fifoname, F_OK) == -1) {
+        // mkfifo()函数用来创建一个命名管道，权限为可读可写，如果返回值不为0，说明创建失败，进行异常处理
         if(mkfifo(fifoname, 0666) != 0) {
             perror("mkfifo()");
             exit(EXIT_FAILURE);
@@ -448,12 +450,15 @@ int main(int argc, char *argv[])
             printf("new fifo %s named pipe created\n", fifoname);
         }
     }
-    fdr = open(fifoname, O_RDWR);  /* blocking write and blocking read in default */
+    // 用open()函数打开一个FIFO文件，其中fifoname是FIFO文件路径名，O_RDWR代表权限可读可写，默认情况下以阻塞模式进行读写，返回一个FIFO的文件描述符给fdr
+    fdr = open(fifoname, O_RDWR);
+    // 如果fdw小于0，说明打开管道失败，进行错误处理，否则打开管道成功
     if(fdr < 0) {
         perror("named pipe read open()");
         exit(EXIT_FAILURE);
     }
-    
+
+    // 为fd数组中每个元素即管道标识符建立一个管道，如果建立失败，打印错误原因
     for (int i = 0; i <= MAX_CONN_NUM; i++) {
         ret = pipe(fd[i]);
         if(ret == -1) {
@@ -461,11 +466,13 @@ int main(int argc, char *argv[])
         }
     }
    
+    // 为fd_stat建立一个管道
     ret = pipe(fd_stat);
     if(ret == -1) {
         perror("fd_stat pipe()");
     }
-        
+    
+    // 为fd_msg建立一个管道
     ret = pipe(fd_msg);
     if(ret == -1) {
         perror("fd_msg pipe()");
